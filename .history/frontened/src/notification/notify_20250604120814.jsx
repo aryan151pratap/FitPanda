@@ -1,0 +1,20 @@
+import Cross from '../image/cross.png';
+
+function Notify(){
+	return(
+		<>
+		<div className="w-[300px] h-[150px] fixed top-4 right-2 z-50">
+			<div className="w-full h-full flex flex-col p-2 shadow-xl rounded-sm bg-white border-2 border-zinc-200">
+				<div className="w-full flex justify-between bg-gradient-to-br from-indigo-600 to-purple-700">
+					<p className="px-2 italic text-white">Notification</p>
+					<button className="ml-auto px-2 rounded-sm cursor-pointer">
+						<img src={Cross} alt="" className='w-5 h-5'/>
+					</button>
+				</div>
+			</div>
+		</div>
+		</>
+	)
+}
+
+export default Notify;
