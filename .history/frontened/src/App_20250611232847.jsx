@@ -50,7 +50,7 @@ function App() {
     }
 
     check_auth();
-  }, [authentication]);
+  }, []);
 
   return (
     <>
