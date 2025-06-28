@@ -39,7 +39,7 @@ function DailyGoalsForm({ setNotification, setShow_goals_form }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4 p-4 border rounded-md max-w-md mx-auto shadow-md bg-white">
+    <form onSubmit={handleSubmit} className="w-sm flex flex-col gap-4 p-4 border rounded-md mx-auto shadow-md bg-white">
       <h2 className="text-lg font-bold text-gray-700">Set Daily Nutrition Goals</h2>
 
 	  <div></div>
