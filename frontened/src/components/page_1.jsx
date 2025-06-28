@@ -85,7 +85,7 @@ function Page_1({ details, setNotification, setCurrent_user }) {
 
         </div>
 
-        <div className={`h-full ${open ? 'flex' : 'hidden'} border-dashed border-1 rounded border-zinc-400 sm:flex md:flex sm:flex-row md:flex-row flex-col gap-2`}>
+        <div className={`h-full ${open ? 'flex' : 'hidden'} rounded border-zinc-400 sm:flex md:flex sm:flex-row md:flex-row flex-col gap-2`}>
           <div className='hidden sm:flex '>
             {tab.map((i, index) => (
               <button

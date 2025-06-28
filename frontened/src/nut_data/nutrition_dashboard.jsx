@@ -1,11 +1,13 @@
-import React from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import ColumnChartCard from "../chart/column_line";
 import BarChart from "../chart/bar_chart";
 import DataLabelsChart from "../chart/chart_card";
 import DailyGoalsForm from "../save_data/save_goala";
+import DoughnutChart from '../chart/doughnutChart';
 import { getSeriesByKey, getIndividualMealSeries } from "../chart/chart_processor";
 
 function NutritionDashboard({ data, log_data, dailyGoals, setShow_goals_form, show_goals_form, setNotification, show_form, setDays, days, currentOption, setCurrentOption, currentChart, setCurrentChart }) {
+  
   const series = currentOption === 'individual' 
     ? getIndividualMealSeries(log_data, days) 
     : getSeriesByKey(log_data, days, currentOption);
@@ -20,7 +22,9 @@ function NutritionDashboard({ data, log_data, dailyGoals, setShow_goals_form, sh
     }, { calories: 0, carbs: 0, protein: 0, fat: 0 });
   };
 
-  const daily_data = summary(data);
+  const daily_data = useMemo(() => summary(data), [data]);
+
+
 
   const options = [
     { value: 'individual', label: 'Individual Meals' },
@@ -39,39 +43,56 @@ function NutritionDashboard({ data, log_data, dailyGoals, setShow_goals_form, sh
 
   return (
     <div className='w-full h-full flex flex-col md:flex-row gap-4'>
-      <div className="md:min-w-md flex flex-col bg-white rounded-xl shadow p-3">
-        <h3 className="text-lg font-bold text-gray-800 border-zinc-200 border-dashed border-b-1 mb-2 py-6 text-xl">Daily Recommendations</h3>
+     
+      <div className="md:min-w-md flex flex-col bg-white rounded-xl shadow-xl p-4">
+        <h3 className="text-xl font-bold text-gray-800 border-b border-dashed border-zinc-300 mb-4 py-4">🥗 Daily Recommendations</h3>
         {(dailyGoals !== null && !show_goals_form) ? (
-          <div className="h-full flex flex-col justify-center space-y-5 p-2">
-            {['calories', 'protein', 'carbs', 'fat'].map((key, index) => (
-              <div key={index}>
-                <div className="flex justify-between mb-1">
-                  <span className="text-sm font-medium text-gray-700">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
-                  <span className="text-sm font-medium text-gray-700">{daily_data[key]}/{dailyGoals[key]}{key === 'calories' ? ' kcal' : 'g'}</span>
+          <div className="flex flex-col justify-center space-y-6">
+            {['calories', 'protein', 'carbs', 'fat'].map((key, index) => {
+              const progress = Math.min((daily_data[key] / dailyGoals[key]) * 100, 100);
+              const isGoalReached = daily_data[key] >= dailyGoals[key];
+
+              return (
+                <div key={index}>
+                  <div className="flex justify-between items-center mb-1">
+                    <span className="text-sm font-medium text-gray-700">{key.charAt(0).toUpperCase() + key.slice(1)}</span>
+                    <span className={`text-sm font-semibold ${isGoalReached ? 'text-green-600' : 'text-gray-700'}`}>
+                      {daily_data[key]}/{dailyGoals[key]} {key === 'calories' ? 'kcal' : 'g'}
+                    </span>
+                  </div>
+                  <div className="w-full bg-gray-100 rounded-full h-3">
+                    <div
+                      className={`h-3 rounded-full transition-all duration-500 ${
+                        key === 'calories' ? 'bg-blue-500' :
+                        key === 'protein' ? 'bg-green-500' :
+                        key === 'carbs' ? 'bg-yellow-500' :
+                        'bg-red-500'
+                      }`}
+                      style={{ width: `${progress}%` }}
+                    />
+                  </div>
                 </div>
-                <div className="w-full bg-gray-200 rounded-full h-2.5">
-                  <div className={`h-2.5 rounded-full ${key === 'calories' ? 'bg-blue-600' : key === 'protein' ? 'bg-green-600' : key === 'carbs' ? 'bg-amber-500' : 'bg-red-500'}`} style={{width: `${Math.min((daily_data[key] / dailyGoals[key]) * 100, 100)}%`}}></div>
-                </div>
-              </div>
-            ))}
-            <div className='flex gap-1 items-center ml-auto mt-auto'>
-              <label className='text-gray-600'>Upate Daily Goals</label>
-              <button className='text-blue-500 hover:underline cursor-pointer' onClick={() => setShow_goals_form(true)}>
+              );
+            })}
+
+            <div className="flex gap-2 items-center justify-end mt-4">
+              <span className="text-gray-500 text-sm">Want to update your goals?</span>
+              <button className="text-blue-600 hover:underline font-semibold" onClick={() => setShow_goals_form(true)}>
                 Update
               </button>
             </div>
           </div>
         ) : (
-          <div>
+          <div className="flex flex-col items-end gap-2">
             {show_goals_form ? (
-              <DailyGoalsForm setNotification={setNotification} setShow_goals_form={setShow_goals_form}/>
+              <DailyGoalsForm setNotification={setNotification} setShow_goals_form={setShow_goals_form} />
             ) : (
-              <div className='flex flex-col'>
-                <label className='text-gray-600'>Set Daily Recommendations:</label>
-                <button className='font-semibold ml-auto border rounded bg-pink-400 p-2 text-white' onClick={() => setShow_goals_form(true)}>
-                  + setGoals
+              <>
+                <label className="text-gray-600 text-sm">Set your daily targets:</label>
+                <button className="bg-pink-500 hover:bg-pink-600 text-white px-4 py-2 rounded-md shadow-md font-semibold" onClick={() => setShow_goals_form(true)}>
+                  + Set Goals
                 </button>
-              </div>
+              </>
             )}
           </div>
         )}
@@ -101,7 +122,7 @@ function NutritionDashboard({ data, log_data, dailyGoals, setShow_goals_form, sh
             </div>
           </div>
         </div>
-        <div className="p-2 md:p-6">
+        <div className="clsmd:p-6">
           <div className="h-80">
             {currentChart === 'bar' ? (
               <BarChart series={series} />
@@ -110,12 +131,7 @@ function NutritionDashboard({ data, log_data, dailyGoals, setShow_goals_form, sh
             ) : currentChart === 'line' ? (
               <DataLabelsChart series={series} unit={'g'} />
             ) : (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <div className="bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 mx-auto mb-4" />
-                  <p className="text-gray-500">Pie Chart Visualization</p>
-                </div>
-              </div>
+              <DoughnutChart series={series} />
             )}
           </div>
         </div>

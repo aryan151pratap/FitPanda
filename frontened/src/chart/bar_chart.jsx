@@ -3,7 +3,6 @@ import ApexCharts from 'apexcharts';
 
 const Bar_Chart = ({ series }) => {
   const chartRef = useRef(null);
-  console.log(series);
 
   useEffect(() => {
     const chartConfig = {

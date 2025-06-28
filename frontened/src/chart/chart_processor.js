@@ -6,7 +6,6 @@ const extractDate = (isoString) => {
 
 export const generateDateLabels = (data, days) => {
   const dates = data.map(item => extractDate(item.createdAt));
-  console.log(dates);
   const uniqueDates = Array.from(new Set(dates)).sort((a, b) => new Date(b) - new Date(a));
   return uniqueDates.slice(0, days).reverse();
 };
@@ -27,7 +26,6 @@ export const getSeriesByKey = (data, days, key) => {
 
 export const getIndividualMealSeries = (data, days) => {
   const labels = generateDateLabels(data, days);
-  console.log(labels);
   const meals = ['breakfast', 'lunch', 'snack', 'dinner'];
 
   return meals.map(meal => ({

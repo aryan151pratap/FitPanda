@@ -4,6 +4,7 @@ const apiUrl = import.meta.env.VITE_BACKEND_ADD;
 
 function Nutrition_form({ setShow_form, setNotification }) {
 	const mealTypes = ['breakfast', 'lunch', 'snack', 'dinner'];
+	const [loading, setLoading] = useState(false);
 
 	const [formData, setFormData] = useState({
 		food: '',
@@ -39,6 +40,7 @@ function Nutrition_form({ setShow_form, setNotification }) {
 			alert('Please fill at least food name and calories.');
 			return;
 		}
+		setLoading(false);
 		try{
 			const res = await fetch(`${apiUrl}/meal/save`, {
 				method: 'POST',
@@ -54,6 +56,8 @@ function Nutrition_form({ setShow_form, setNotification }) {
 			}
 		} catch (err) {
 			console.error('Error:', err);
+		} finally {
+			setLoading(false);
 		}
 	};
 
@@ -99,28 +103,57 @@ function Nutrition_form({ setShow_form, setNotification }) {
 			</div>
 
 			<label htmlFor="" className='font-bold'>Add Food Image!</label>
-			<div className='flex flex-between items-center bg-green-200 rounded p-2 w-fit'>
-				<input type="file" accept="image/*" onChange={handleImage} className=''/>
-				{formData.image && 
-				<div className='shrink-0 p-2 border-2 w-fit rounded border-dashed bg-gray-300'>
-					<img src={formData.image} alt="preview" width="100" className='h-10 w-10'/>
-				</div>
+			<div className="flex flex-col items-center gap-3 bg-white rounded-xl p-4 w-full md:w-lg border border-blue-500 shadow-sm">
+				{formData.image ? 
+					<div className="relative p-2 border-2 border-dashed border-gray-400 rounded bg-gray-100">
+						<div className='absolute inset-0 w-fit h-fit top-0 left-auto bg-zinc-500/40 hover:bg-zinc-500/80 rounded-full cursor-pointer'
+						onClick={() => {
+							setFormData((prev) => ({ ...prev, image: '' }));
+						}}
+						>
+							<svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+								<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
+							</svg>
+						</div>
+						<img
+							src={formData.image}
+							alt="Preview"
+							className="h-24 w-24 object-cover rounded"
+						/>
+					</div>
+				:
+					<label className="h-28.5 w-28.5 cursor-pointer p-2 border-dashed border-2 text-blue-500 flex items-center text-center border-blue-500 rounded hover:bg-blue-600 transition">
+						Upload Image
+						<input
+							type="file"
+							accept="image/*"
+							onChange={handleImage}
+							className="hidden"
+						/>
+					</label>
 				}
 			</div>
 
+
 			<div className='flex justify-between'>
 				<button
-					className='border-2 p-2 rounded border-dashed font-bold hover:bg-red-400'
+					className='border-2 p-2 rounded border-dashed font-bold bg-red-300 hover:bg-red-400'
 					onClick={() => setShow_form(false)}
 				>
 					Cancel
 				</button>
-				<button
-					className='border-2 p-2 rounded border-dashed font-bold hover:bg-green-400'
+				{loading ?
+					<div className='w-fit h-full p-2'>
+						<div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
+					</div>
+				:
+					<button
+					className='border-2 p-2 rounded border-dashed font-bold bg-green-300 hover:bg-green-400'
 					onClick={handleSubmit}
-				>
-					Save
-				</button>
+					>
+						Save
+					</button>
+				}
 			</div>
 		</div>
 	);
