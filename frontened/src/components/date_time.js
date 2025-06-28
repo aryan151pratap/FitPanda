@@ -7,7 +7,7 @@ const formatDateTime = (isoString) => {
   return { date: formattedDate, time: formattedTime };
 };
 
-const fetchData = async ({ apiUrl, setData, setDailyGoals, setNotification }) => {
+const fetchData = async ({ apiUrl, setData, setNotification }) => {
   try {
     const mealRes = await fetch(`${apiUrl}/meal/today`, {
       method: 'GET',
@@ -27,6 +27,14 @@ const fetchData = async ({ apiUrl, setData, setDailyGoals, setNotification }) =>
       setNotification(mealData.message || 'Failed to fetch today\'s meals');
     }
 
+  } catch (err) {
+    console.error('Error:', err);
+    setNotification('An error occurred while fetching data');
+  }
+};
+
+const fetchGoal = async ({ apiUrl, setDailyGoals, setNotification }) => {
+  try{
     const goalsRes = await fetch(`${apiUrl}/meal/goals`, {
       method: 'GET',
       headers: { 'Content-Type': 'application/json' },
@@ -39,11 +47,10 @@ const fetchData = async ({ apiUrl, setData, setDailyGoals, setNotification }) =>
       setDailyGoals(goalsData.dailyGoals || {});
     } else {
       console.warn('Failed to fetch daily goals');
-    }
+    } 
   } catch (err) {
     console.error('Error:', err);
     setNotification('An error occurred while fetching data');
   }
-};
-
-export { formatDateTime, fetchData };
+}
+export { formatDateTime, fetchData, fetchGoal };

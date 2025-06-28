@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import NutritionDashboard from './nutrition_dashboard';
 import FoodLogTable from './food_log';
 import Nutrition_form from '../save_data/nutrition_form';
-import { formatDateTime, fetchData } from '../components/date_time';
+import { formatDateTime, fetchData, fetchGoal } from '../components/date_time';
 import img from '../image/diet.png';
 
 const apiUrl = import.meta.env.VITE_BACKEND_ADD;
@@ -19,8 +19,12 @@ function Nutrition({ setNotification }) {
   const [show_goals_form, setShow_goals_form] = useState(false);
 
   useEffect(() => {
-    fetchData({ apiUrl, setData, setDailyGoals, setNotification });
+    fetchData({ apiUrl, setData, setNotification });
   }, [show_form]);
+
+  useEffect(() => {
+    fetchGoal({ apiUrl, setDailyGoals, setNotification })
+  }, [show_goals_form])
 
   useEffect(() => {
     const fetchLimitedData = async () => {
