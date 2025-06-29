@@ -45,7 +45,7 @@ router.post('/save', auth, async (req, res) => {
     });
 
     if (existingEntry) {
-      Object.assign(existingEntry, { food, calories, carbs, protein, fat });
+      Object.assign(existingEntry, { name: food, calories, carbs, protein, fat });
       if (image) existingEntry.image = image;
       await existingEntry.save();
       return res.status(200).json({ message: 'Nutrition data updated successfully!' });

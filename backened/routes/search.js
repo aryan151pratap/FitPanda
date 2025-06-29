@@ -7,7 +7,6 @@ const Fuse = require('fuse.js');
 router.get('/', async (req, res) => {
   const query = req.query.q;
   if (!query) return res.status(400).json({ error: 'Missing search query' });
-  console.log(query);
   try {
     const fuse = new Fuse(foods, {
       keys: ['name', 'meal'],

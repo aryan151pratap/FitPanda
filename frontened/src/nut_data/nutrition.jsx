@@ -19,9 +19,12 @@ function Nutrition({ setNotification }) {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [show_form, setShow_form] = useState(false);
   const [show_goals_form, setShow_goals_form] = useState(false);
+  const [search_data, setSearch_data] = useState([]);
 
   const [showConfetti, setShowConfetti] = useState(false);
   const [task, setTask] = useState([]);
+
+  const formRef = useRef(null);
   
   const summary = function(data) {
     return data.reduce((acc, food) => {
@@ -38,11 +41,14 @@ function Nutrition({ setNotification }) {
 
   useEffect(() => {
     fetchData({ apiUrl, setData, setNotification });
+    if (show_form && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
   }, [show_form]);
 
   useEffect(() => {
     fetchGoal({ apiUrl, setDailyGoals, setNotification })
-  }, [show_goals_form])
+  }, [show_goals_form]);
 
   
   useEffect(() => {
@@ -62,7 +68,7 @@ function Nutrition({ setNotification }) {
       setTimeout(() => {
         setShowConfetti(false);
         setTask([]);
-      }, 6000);
+      }, 10000);
     }
 
     if (!isCompleted) {
@@ -91,17 +97,21 @@ function Nutrition({ setNotification }) {
 
   return (
     <div className="min-h-screen w-full bg-gradient-to-br from-gray-50 to-gray-100 sm:p-2">
-      {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight} />} 
+      {showConfetti && <Confetti width={window.innerWidth} height={window.innerHeight}/>} 
       <div className=''>
-        {task.length > 0 &&
-        <div className='fixed inset-0 w-full h-fit p-5 flex flex-col gap-2 items-center justify-center'>
-          {task.map((i, index) => (
-            <div key={index} className='h-fit flex flex-row gap-2 rounded items-center px-4 bg-white capitalize'>
-              <div className='w-fit h-fit p-2 bg-green-500 rounded-full'></div>
-              <span className='p-2 flex gap-2'>{i}<span>Completed</span></span>
+        {(showConfetti && task.length > 0) &&
+        <div className='fixed inset-0 z-50 w-full h-fit p-5 flex flex-col gap-2 items-center justify-center'>
+            <div className='relative h-fit flex flex-row rounded-xl items-center px-4 bg-white capitalize shadow-xl'>
+              <div className='absolute w-fit h-fit p-1.5 bg-green-500 rounded-full'></div>
+              <div className='absolute w-fit h-fit p-1.5 bg-green-500 rounded-full animate-ping'></div>          
+              {task.length < 4 ?
+                <p className='ml-4 p-2 flex inline text-sm gap-2'>{task.length} Daily Recommendations out of 4 <span className='text-green-500'>Completed</span></p>
+                :
+                <span className='ml-4 p-2 flex gap-2'>All Daily Recommendations <span className='text-green-500'>Completed</span></span>
+              }
               <button className='cursor-pointer'
               onClick={() => {
-                setTask(task.filter((key) => key!==i));
+                setTask([]);
               }}
               >
                 <svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
@@ -109,15 +119,20 @@ function Nutrition({ setNotification }) {
                 </svg>
               </button>
             </div>
-          ))}
         </div>
         }
       </div>
       <div className="w-full">
-        <header className="mb-8">
-          <h1 className="text-3xl md:text-4xl font-bold text-gray-800 mb-2">Nutrition Dashboard</h1>
+        <header className="mb-8 text-center sm:text-start">
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">Nutrition Dashboard</h1>
           <p className="text-gray-600">Track and analyze your nutritional intake</p>
         </header>
+
+
+        <div className='py-2 mb-4'>
+          <Search setSearch_data={setSearch_data} setShow_form={setShow_form}/>
+        </div>
+
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-xl shadow p-4 border-l-4 border-blue-500">
@@ -173,27 +188,27 @@ function Nutrition({ setNotification }) {
         <div className="mt-6 grid gap-6">
           <div className="md:col-span-2 bg-white rounded-xl shadow p-2 md:p-6">
 
-          <Search/>
-
             <h3 className="text-lg font-bold text-gray-800 mb-4 p-2">Recent Meals</h3>
             <div className="space-y-4">
               {data.slice(0, 4).map((food, index) => (
-                <div key={index} className="flex flex-wrap sm:flex-row items-center border-b pb-4 last:border-0 last:pb-0">
-                  <div className="shrink-0 bg-gray-200 border-2 border-dashed rounded-xl w-16 h-16 overflow-hidden">
+                <div key={index} className="flex sm:flex-row items-center border-b pb-4 last:border-0 last:pb-0">
+                  <div className="shrink-0 bg-gray-200 border-2 border-dashed rounded-xl h-14 w-14 sm:w-16 sm:h-16 overflow-hidden">
                     <img src={food.image ? food.image : img} alt="" className='w-full h-full p-1 rounded-xl object-cover bg-white' />
                   </div>
-                  <div className="ml-4 flex-1">
-                    <h4 className="font-medium text-gray-900 flex flex-col sm:flex-row">{food.name} <span className='text-gray-500 capitalize sm:px-2'>({food.meal})</span></h4>
-                    <div className="flex mt-1 text-sm text-gray-500">
+
+                  <div className="ml-2 flex-1 text-sm sm:text-lg">
+                    <div className="text-md flex justify-between text-gray-500 p-2 sm:p-1 mr-auto flex flex-row gap-2 mb-auto">
+                      <h4 className="font-medium text-gray-900 flex flex-col sm:flex-row">{food.name} <span className='text-gray-500 capitalize sm:px-2'>({food.meal})</span></h4>
+                      <div className='text-sm'>Today {formatDateTime(food.createdAt).time}</div>
+                    </div>
+                    <div className="flex sm:gap-2 mt-1 text-sm text-gray-500 px-2">
                       <span className="mr-3">{food.calories} kcal</span>
                       <span className="mr-3">{food.carbs}g carbs</span>
                       <span className="mr-3">{food.protein}g protein</span>
                       <span>{food.fat}g fat</span>
                     </div>
                   </div>
-                  <div className="text-sm text-gray-500 p-2 sm:p-1 mr-auto flex flex-row gap-2 mb-auto">Today
-                    <div>{formatDateTime(food.createdAt).time}</div>
-                  </div>
+                    
                 </div>
               ))}
               <div>
@@ -201,7 +216,11 @@ function Nutrition({ setNotification }) {
                   + Add meal
                 </button>
               </div>
-              {show_form && <Nutrition_form setShow_form={setShow_form} setNotification={setNotification} />}
+              {show_form && 
+              <div ref={formRef}>
+              <Nutrition_form setShow_form={setShow_form} setNotification={setNotification} search_data={search_data}/>
+              </div>
+              }
             </div>
           </div>
         </div>

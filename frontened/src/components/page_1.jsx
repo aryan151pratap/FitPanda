@@ -11,6 +11,7 @@ import goal_img from '../image/target.png';
 import setting from '../image/technology.png';
 import panda_img from '../image/panda_img.png';
 import Nutrition from '../nut_data/nutrition';
+import SleepTracker from '../sleep_section/sleep';
 
 
 function Page_1({ details, setNotification, setCurrent_user }) {
@@ -43,17 +44,17 @@ function Page_1({ details, setNotification, setCurrent_user }) {
       </div>
       
 
-      <div className={`${show_left ? "w-full" : "w-full"} h-full mx-auto p-2 flex flex-col flex flex-col gap-2`}>
+      <div className={`${show_left ? "w-full" : "w-full"} h-full mx-auto sm:p-2 flex flex-col flex flex-col gap-2`}>
         
       <div className="h-full w-full rounded-sm md:rounded-xl bg-black text-white p-4 flex flex-col gap-4">
 
         <div className="flex flex-col sm:flex-row md:flex-row gap-2">
 
-          <div className="flex items-center md:mb-0 mb-4">
+          <div className="flex items-center md:mb-0 sm:mb-4">
             <div className="shrink-0 bg-gradient-to-r from-cyan-500 to-blue-500 w-10 h-10 rounded-lg flex items-center justify-center mr-3 overflow-hidden">
               <Logo/>
             </div>
-            <h1 className="text-2xl font-bold">FitPanda Dashboard</h1>
+            <h1 className="text-xl sm:text-2xl font-bold">FitPanda Dashboard</h1>
           </div>
 {/* 
           <div className="sm:ml-auto md:ml-auto items-center flex justify-center sm:mr-1 md:mr-4 mb-4">
@@ -108,7 +109,7 @@ function Page_1({ details, setNotification, setCurrent_user }) {
 
       </div>
 
-      <div className='h-full'>
+      <div className='h-full p-2'>
         {activeTab === 'dashboard' ?
         <Page setNotification={setNotification}/>
         :
@@ -120,6 +121,9 @@ function Page_1({ details, setNotification, setCurrent_user }) {
         :
         activeTab === 'nutrition' ?
         <Nutrition setNotification={setNotification}/>
+        :
+        activeTab === 'sleep' ?
+        <SleepTracker/>
         :
         <div className='flex items-center justify-center'>
           No page found!

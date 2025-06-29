@@ -1,10 +1,11 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import imageCompression from 'browser-image-compression';
 const apiUrl = import.meta.env.VITE_BACKEND_ADD;
 
-function Nutrition_form({ setShow_form, setNotification }) {
+function Nutrition_form({ setShow_form, setNotification, search_data }) {
 	const mealTypes = ['breakfast', 'lunch', 'snack', 'dinner'];
 	const [loading, setLoading] = useState(false);
+	const [imageMode, setImageMode] = useState('upload'); // 'upload' or 'url'
 
 	const [formData, setFormData] = useState({
 		food: '',
@@ -15,6 +16,17 @@ function Nutrition_form({ setShow_form, setNotification }) {
 		mealType: 'breakfast',
 		image: '',
 	});
+
+	useEffect(() => {
+		if(search_data){
+			setImageMode("url");
+			setFormData({
+				food: search_data.name,
+				mealType: search_data.meal,
+				...search_data
+			})
+		}
+	}, [search_data])
 
 	const handleChange = (e) => {
 		const { name, value } = e.target;
@@ -27,9 +39,9 @@ function Nutrition_form({ setShow_form, setNotification }) {
 
 		const options = { maxSizeMB: 0.1, maxWidthOrHeight: 800 };
 		try {
-		const compressedFile = await imageCompression(file, options);
-		const base64 = await imageCompression.getDataUrlFromFile(compressedFile);
-		setFormData((prev) => ({ ...prev, image: base64 }));
+			const compressedFile = await imageCompression(file, options);
+			const base64 = await imageCompression.getDataUrlFromFile(compressedFile);
+			setFormData((prev) => ({ ...prev, image: base64 }));
 		} catch (error) {
 			console.error('Compression error:', error);
 		}
@@ -40,8 +52,8 @@ function Nutrition_form({ setShow_form, setNotification }) {
 			alert('Please fill at least food name and calories.');
 			return;
 		}
-		setLoading(false);
-		try{
+		setLoading(true);
+		try {
 			const res = await fetch(`${apiUrl}/meal/save`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -50,10 +62,7 @@ function Nutrition_form({ setShow_form, setNotification }) {
 			});
 			const result = await res.json();
 			setNotification(result.message);
-
-			if (res.ok) {
-				setShow_form(false);
-			}
+			if (res.ok) setShow_form(false);
 		} catch (err) {
 			console.error('Error:', err);
 		} finally {
@@ -62,105 +71,119 @@ function Nutrition_form({ setShow_form, setNotification }) {
 	};
 
 	return (
-		<div className='flex flex-col gap-2'>
-			<h1 className='text-lg font-bold text-gray-600'>Fill the Meal Details</h1>
-			<div className='grid grid-cols-2 md:grid-cols-4 flex-wrap gap-2 md:gap-4'>
+		<div className='flex flex-col gap-4 p-4 bg-white shadow-lg rounded-xl'>
+			<h1 className='text-xl font-bold text-gray-700'>🥗 Add Nutrition Details</h1>
+
+			<div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
 				{[
-					{ label: 'Food', name: 'food', type: 'text', placeholder: 'Food' },
-					{ label: 'Calories', name: 'calories', type: 'number', placeholder: 'Calories' },
-					{ label: 'Carbs', name: 'carbs', type: 'number', placeholder: 'Carbs (g)' },
-					{ label: 'Protein', name: 'protein', type: 'number', placeholder: 'Protein (g)' },
-					{ label: 'Fat', name: 'fat', type: 'number', placeholder: 'Fat (g)' },
-				].map((field, index) => (
-					<div key={index} className='border-1 rounded flex flex-col p-2 gap-2'>
-						<label>{field.label}</label>
+					{ label: 'Food', name: 'food', type: 'text', placeholder: 'e.g. Aloo Parantha' },
+					{ label: 'Calories', name: 'calories', type: 'number', placeholder: 'e.g. 250' },
+					{ label: 'Carbs (g)', name: 'carbs', type: 'number', placeholder: 'e.g. 40' },
+					{ label: 'Protein (g)', name: 'protein', type: 'number', placeholder: 'e.g. 10' },
+					{ label: 'Fat (g)', name: 'fat', type: 'number', placeholder: 'e.g. 12' },
+				].map((field, i) => (
+					<div key={i} className='flex flex-col gap-1'>
+						<label className='font-medium'>{field.label}</label>
 						<input
 							type={field.type}
 							name={field.name}
-							placeholder={field.placeholder}
 							value={formData[field.name]}
+							placeholder={field.placeholder}
 							onChange={handleChange}
-							className='rounded border-2 border-dashed p-2'
+							className='border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
 						/>
 					</div>
 				))}
 
-				<div className='border-1 rounded flex flex-col p-2 gap-2'>
-					<label>Meal type</label>
+				<div className='flex flex-col gap-1'>
+					<label className='font-medium'>Meal Type</label>
 					<select
 						name="mealType"
 						value={formData.mealType}
 						onChange={handleChange}
-						className='border-2 rounded p-2 cursor-pointer'
+						className='border border-gray-300 p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
 					>
-						{mealTypes.map((meal, index) => (
-							<option key={index} value={meal}>
-								{meal}
-							</option>
+						{mealTypes.map((meal, i) => (
+							<option key={i} value={meal}>{meal}</option>
 						))}
 					</select>
 				</div>
 			</div>
 
-			<label htmlFor="" className='font-bold'>Add Food Image!</label>
-			<div className="flex flex-col items-center gap-3 bg-white rounded-xl p-4 w-full md:w-lg border border-blue-500 shadow-sm">
-				{formData.image ? 
-					<div className="relative p-2 border-2 border-dashed border-gray-400 rounded bg-gray-100">
-						<div className='absolute inset-0 w-fit h-fit top-0 left-auto bg-zinc-500/40 hover:bg-zinc-500/80 rounded-full cursor-pointer'
-						onClick={() => {
-							setFormData((prev) => ({ ...prev, image: '' }));
-						}}
-						>
-							<svg xmlns="http://www.w3.org/2000/svg" className="w-5 h-5 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-								<path strokeLinecap="round" strokeLinejoin="round" d="M6 18L18 6M6 6l12 12" />
-							</svg>
-						</div>
-						<img
-							src={formData.image}
-							alt="Preview"
-							className="h-24 w-24 object-cover rounded"
-						/>
-					</div>
-				:
-					<label className="h-28.5 w-28.5 cursor-pointer p-2 border-dashed border-2 text-blue-500 flex items-center text-center border-blue-500 rounded hover:bg-blue-600 transition">
-						Upload Image
-						<input
-							type="file"
-							accept="image/*"
-							onChange={handleImage}
-							className="hidden"
-						/>
-					</label>
-				}
+			<div className='flex items-center gap-4'>
+				<button
+					className={`px-4 py-1 rounded font-medium border ${
+						imageMode === 'upload' ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'
+					}`}
+					onClick={() => setImageMode('upload')}
+				>
+					Upload Image
+				</button>
+				<button
+					className={`px-4 py-1 rounded font-medium border ${
+						imageMode === 'url' ? 'bg-blue-500 text-white' : 'bg-white text-blue-500'
+					}`}
+					onClick={() => setImageMode('url')}
+				>
+					Use Image URL
+				</button>
 			</div>
 
+			{imageMode === 'upload' ? (
+				<div className="flex items-center gap-3">
+					<input
+						type="file"
+						accept="image/*"
+						onChange={handleImage}
+						className="file:bg-blue-500 file:text-white file:px-4 file:py-1 file:rounded file:cursor-pointer"
+					/>
+				</div>
+			) : (
+				<div className='flex flex-col gap-1'>
+					<label className='font-medium'>Image URL</label>
+					<input
+						type="text"
+						value={formData.image}
+						onChange={(e) => setFormData((prev) => ({ ...prev, image: e.target.value }))}
+						placeholder="https://example.com/image.jpg"
+						className="border p-2 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+					/>
+				</div>
+			)}
 
-			<div className='flex justify-between'>
+			{formData.image && (
+				<div className="relative w-fit p-2 border-2 rounded border-dashed">
+					<img src={formData.image} alt="Preview" className="w-24 h-24 object-cover rounded" />
+					<button
+						className="absolute top-0 right-0 bg-red-500 text-white rounded-full w-fit h-fit px-1.5"
+						onClick={() => setFormData((prev) => ({ ...prev, image: '' }))}
+					>
+						✕
+					</button>
+				</div>
+			)}
+
+			<div className='flex justify-between items-center mt-4'>
 				<button
-					className='border-2 p-2 rounded border-dashed font-bold bg-red-300 hover:bg-red-400'
+					className='bg-red-400 text-white px-4 py-2 rounded hover:bg-red-500 font-semibold'
 					onClick={() => setShow_form(false)}
 				>
 					Cancel
 				</button>
-				{loading ?
-					<div className='w-fit h-full p-2'>
-						<div className="w-8 h-8 border-4 border-indigo-500 border-t-transparent rounded-full animate-spin"></div>
-					</div>
-				:
+
+				{loading ? (
+					<div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin"></div>
+				) : (
 					<button
-					className='border-2 p-2 rounded border-dashed font-bold bg-green-300 hover:bg-green-400'
-					onClick={handleSubmit}
+						onClick={handleSubmit}
+						className='bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 font-semibold'
 					>
 						Save
 					</button>
-				}
+				)}
 			</div>
 		</div>
 	);
 }
 
-
-
 export default Nutrition_form;
-
-
