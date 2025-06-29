@@ -46,7 +46,7 @@ function Page_1({ details, setNotification, setCurrent_user }) {
 
       <div className={`${show_left ? "w-full" : "w-full"} h-full mx-auto sm:p-2 flex flex-col flex flex-col gap-2`}>
         
-      <div className="h-full w-full rounded-sm md:rounded-xl bg-black text-white p-4 flex flex-col gap-4">
+      <div className="h-full w-full rounded-sm md:rounded bg-black text-white p-4 flex flex-col gap-4">
 
         <div className="flex flex-col sm:flex-row md:flex-row gap-2">
 
@@ -56,17 +56,12 @@ function Page_1({ details, setNotification, setCurrent_user }) {
             </div>
             <h1 className="text-xl sm:text-2xl font-bold">FitPanda Dashboard</h1>
           </div>
-{/* 
-          <div className="sm:ml-auto md:ml-auto items-center flex justify-center sm:mr-1 md:mr-4 mb-4">
-            <Search/>
-          </div> */}
 
           <div className="w-full sm:w-fit flex flex-row gap-2 items-center flex justify-between mb-2 ml-auto">
             
             <button className="w-fit p-2 sm:hidden md:hidden flex cursor-pointer"
             onClick={() => setOpen(!open)}
             >
-              {/* <img src={Menu_img} alt="" className="h-9 w-9"/> */}
               <div className='flex flex-col gap-[6px]'>
                 <span className='py-[1px] w-7 bg-white'></span>
                 <span className='py-[1px] w-7 bg-white'></span>

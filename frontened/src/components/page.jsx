@@ -30,20 +30,14 @@ function Page(){
 	return(
 		<>
 		<div className="flex flex-col gap-2">
-			<div className="grid sm:grid-cols-2 md:grid-cols-3 grid-cols-1 flex gap-2">
+			<div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 flex gap-2">
 				{data.map((i, index) => (
-					<div className="flex flex-col p-2 rounded-xl shadow-xl bg-white">
+					<div className="text-sm font-boldflex flex-col p-2 rounded-xl shadow-xl bg-white">
 						<div>
-							<p className="text-[18px] text-zinc-600 capitalize">{i.name}</p>
-							 {/* percent, size = 120, stroke = 10, label, value, unit  */}
-
-							<div className="p-2 flex justify-end">
-								{/* <RadialProgress percent={i.percent} value={i.value} unit={i.unit} /> */}
+							<p className="sm:text-[18px] text-zinc-600 capitalize">{i.name}</p>
+							<div className="p-2 flex justify-center sm:justify-end">
 								<Piechart percent={i.percent} value={i.value} unit={i.unit}/>
-								{/* <Bar_Chart/> */}
-								{/* <ColumnChartCard/> */}
-								{/* <ProfitChartCard/> */}
-								{/* <DataLabelsChart/> */}
+								
 							</div>
 						</div>
 					</div>

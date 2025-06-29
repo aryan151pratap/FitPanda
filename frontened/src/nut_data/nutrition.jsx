@@ -124,7 +124,7 @@ function Nutrition({ setNotification }) {
       </div>
       <div className="w-full">
         <header className="mb-8 text-center sm:text-start">
-          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2">Nutrition Dashboard</h1>
+          <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-800 mb-2 p-2">Nutrition Dashboard</h1>
           <p className="text-gray-600">Track and analyze your nutritional intake</p>
         </header>
 
