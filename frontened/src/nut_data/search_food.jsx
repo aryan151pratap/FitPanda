@@ -74,14 +74,14 @@ function Search({ setSearch_data, setShow_form }) {
         </button>
       </form>
 
-      <div className={`${results.length > 0 ? "h-[400px]" : "h-fit"} overflow-auto`}>
+      <div className={`${results.length > 0 ? "max-h-[400px]" : "h-fit"} overflow-auto`}>
         {isLoading ? (
           <div className="flex flex-col items-center justify-center h-full">
             <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500 mb-4"></div>
             <p className="text-gray-600">Finding delicious meals...</p>
           </div>
         ) : results.length > 0 && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-2">
             {results.map((food) => (
               <div key={food.id} className="flex gap-4 items-center p-2 sm:p-4 rounded-xl bg-white border border-gray-200 shadow-sm hover:shadow-md transition-all duration-200">
                 <div className="flex-shrink-0 border-dashed border-2 rounded-xl">
