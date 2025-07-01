@@ -2,7 +2,7 @@ import React, { useEffect, useState, useMemo, useRef } from 'react';
 import ColumnChartCard from "../chart/column_line";
 import BarChart from "../chart/bar_chart";
 import DataLabelsChart from "../chart/chart_card";
-import DailyGoalsForm from "../save_data/save_goala";
+import DailyGoalsForm from './save_data/save_goala';
 import DoughnutChart from '../chart/doughnutChart';
 import { getSeriesByKey, getIndividualMealSeries } from "../chart/chart_processor";
 

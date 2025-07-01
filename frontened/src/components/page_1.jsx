@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import Page from './page';
+import Page from '../dashboard/page';
 import Search from './search';
 import Setting from './setting';
-import Goals from './goals';
+import Goals from '../goals/goals';
 import Logo from './logo';
 import Left_bar from './left_bar';
 import nutrition_img from '../image/diet.png';

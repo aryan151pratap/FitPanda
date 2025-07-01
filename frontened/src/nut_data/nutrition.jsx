@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import NutritionDashboard from './nutrition_dashboard';
 import FoodLogTable from './food_log';
-import Nutrition_form from '../save_data/nutrition_form';
+import Nutrition_form from './save_data/nutrition_form';
 import { formatDateTime, fetchData, fetchGoal } from '../components/date_time';
 import img from '../image/diet.png';
 import Confetti from "react-confetti";

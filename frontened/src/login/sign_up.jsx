@@ -81,7 +81,7 @@ function Sign_up({ setOtp, setEmail, setNotification, setAuthentication }) {
         <div className="bg-white rounded-2xl shadow-xl overflow-hidden flex flex-col md:flex-row">
 
           {/* Left Section - Brand Showcase */}
-          <div className="hidden sm:flex md:flex w-full md:w-2/5 bg-gradient-to-br from-cyan-600 to-cyan-700 p-8 md:p-12 flex flex-col justify-between">
+          <div className="hidden sm:flex md:flex w-full md:w-2/5 bg-gradient-to-br from-cyan-600 to-green-700 p-8 md:p-12 flex flex-col justify-between">
             <div className="flex sm:flex-row md:flex-col sm:items-center gap-4">
               <div className="p-2 rounded-full flex flex-row gap-4">
                 <div className="bg-white p-2 w-20 h-20 rounded-full flex items-center justify-center overflow-hidden">

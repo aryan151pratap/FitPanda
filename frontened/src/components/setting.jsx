@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import verified_img from '../image/approved.png';
 import edit_img from '../image/edit.png';
 import Profile from './profile';
@@ -8,6 +8,7 @@ const apiUrl = import.meta.env.VITE_BACKEND_ADD;
 function Setting({ details, setCurrent_user, setNotification }) {
 	const [update, setUpdate] = useState(false);
 	const [new_data, setNew_data] = useState(details);
+	const printRef = useRef(null);
 
 	useEffect(() => {
 		setNew_data(details);
@@ -44,6 +45,12 @@ function Setting({ details, setCurrent_user, setNotification }) {
 		}
 	};
 
+	const handlePrint = () => {
+		if (printRef.current) {
+			window.print();
+		}
+	};
+
 	const fieldLabels = {
 		username: 'Username',
 		email: 'Email Address',
@@ -55,90 +62,99 @@ function Setting({ details, setCurrent_user, setNotification }) {
 	};
 
 	return (
-		<div className="w-full flex flex-col md:flex-col gap-4">
-			<Profile data={details} />
+		<div className="w-full flex flex-col gap-6">
+			<div className="flex justify-end print:hidden">
+				<button
+					onClick={handlePrint}
+					className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded shadow"
+				>
+					Print or Download PDF
+				</button>
+			</div>
 
-			<div className="w-full bg-white shadow-md rounded-t-lg overflow-hidden">
-				<div className="flex items-center justify-between px-4 py-3 border-b bg-gray-100">
-					<h2 className="text-lg font-semibold text-gray-700">User Information</h2>
-					{!update && (
-						<img
-							src={edit_img}
-							alt="edit"
-							className="h-7 w-7 cursor-pointer hover:scale-105 transition"
-							onClick={() => setUpdate(true)}
-						/>
-					)}
-				</div>
+			<div ref={printRef} className="print:bg-white print:text-black print:p-0 print:shadow-none">
+				<Profile data={details} />
 
-				<table className="w-full text-sm">
-					<thead className="bg-gray-200 text-gray-600 text-left">
-						<tr>
-							<th className="px-4 py-2 border">Field</th>
-							<th className="px-4 py-2 border">Value</th>
-						</tr>
-					</thead>
-
-					<tbody>
-						{Object.entries(details).map(([key, value], index) => (
-							<tr
-								key={index}
-								className={index % 2 === 0 ? 'bg-gray-50' : 'bg-white'}
-							>
-								<td className="px-4 py-2 border font-medium text-gray-700">
-									{fieldLabels[key]}
-								</td>
-								<td className="px-4 py-2 border">
-									{!update || key === 'verified' || key === 'email' ? (
-										<div className="flex items-center gap-2">
-											<p>{value.toString()}</p>
-											{value === true && (
-												<img
-													src={verified_img}
-													alt="Verified"
-													className="h-5 w-5"
-													title="Verified"
-												/>
-											)}
-										</div>
-									) : (
-										<input
-											type="text"
-											className="w-full px-2 py-1 border rounded-md bg-gray-100 focus:outline-none focus:ring focus:ring-blue-300"
-											value={new_data[key]}
-											onChange={(e) =>
-												setNew_data({ ...new_data, [key]: e.target.value })
-											}
-										/>
-									)}
-								</td>
-							</tr>
-						))}
-
-						{update && (
-							<tr className="bg-gray-100">
-								<td className="px-4 py-2 border font-semibold">Actions</td>
-								<td className="px-4 py-2 border flex gap-3 justify-between">
-									<button
-										className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
-										onClick={() => {
-											setUpdate(false);
-											setNew_data(details);
-										}}
-									>
-										Cancel
-									</button>
-									<button
-										className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
-										onClick={handle_update}
-									>
-										Update
-									</button>
-								</td>
-							</tr>
+				<div className="w-full bg-white shadow-md rounded-lg overflow-hidden mt-6 border print:border-black">
+					<div className="flex items-center justify-between px-4 py-3 border-b bg-gray-100 print:bg-white print:border-black">
+						<h2 className="text-lg font-semibold text-gray-700 print:text-black">User Report</h2>
+						{!update && (
+							<img
+								src={edit_img}
+								alt="edit"
+								className="h-7 w-7 cursor-pointer hover:scale-105 transition print:hidden"
+								onClick={() => setUpdate(true)}
+							/>
 						)}
-					</tbody>
-				</table>
+					</div>
+
+					<table className="w-full text-sm">
+						<thead className="bg-gray-200 text-gray-600 text-left print:bg-white print:text-black">
+							<tr>
+								<th className="px-4 py-2 border print:border-black">Field</th>
+								<th className="px-4 py-2 border print:border-black">Value</th>
+							</tr>
+						</thead>
+						<tbody>
+							{Object.entries(details).map(([key, value], index) => (
+								<tr
+									key={index}
+									className={index % 2 === 0 ? 'bg-gray-50 print:bg-white' : 'bg-white'}
+								>
+									<td className="px-4 py-2 border font-medium text-gray-700 print:text-black print:border-black">
+										{fieldLabels[key]}
+									</td>
+									<td className="px-4 py-2 border print:border-black">
+										{!update || key === 'verified' || key === 'email' ? (
+											<div className="flex items-center gap-2">
+												<p>{value.toString()}</p>
+												{value === true && (
+													<img
+														src={verified_img}
+														alt="Verified"
+														className="h-5 w-5"
+													/>
+												)}
+											</div>
+										) : (
+											<input
+												type="text"
+												className="w-full px-2 py-1 border rounded-md bg-gray-100 focus:outline-none focus:ring focus:ring-blue-300"
+												value={new_data[key]}
+												onChange={(e) =>
+													setNew_data({ ...new_data, [key]: e.target.value })
+												}
+											/>
+										)}
+									</td>
+								</tr>
+							))}
+
+							{update && (
+								<tr className="bg-gray-100 print:hidden">
+									<td className="px-4 py-2 border font-semibold">Actions</td>
+									<td className="px-4 py-2 border flex gap-3 justify-between">
+										<button
+											className="px-3 py-1 text-sm bg-red-600 text-white rounded hover:bg-red-700"
+											onClick={() => {
+												setUpdate(false);
+												setNew_data(details);
+											}}
+										>
+											Cancel
+										</button>
+										<button
+											className="px-3 py-1 text-sm bg-green-600 text-white rounded hover:bg-green-700"
+											onClick={handle_update}
+										>
+											Update
+										</button>
+									</td>
+								</tr>
+							)}
+						</tbody>
+					</table>
+				</div>
 			</div>
 		</div>
 	);
