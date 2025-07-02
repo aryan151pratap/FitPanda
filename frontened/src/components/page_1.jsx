@@ -104,7 +104,7 @@ function Page_1({ details, setNotification, setCurrent_user }) {
 
       </div>
 
-      <div className='h-full p-2'>
+      <div className='h-full p-2 bg-white/90'>
         {activeTab === 'dashboard' ?
         <Page setNotification={setNotification}/>
         :

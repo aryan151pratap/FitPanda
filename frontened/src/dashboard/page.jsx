@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Assistant from "./assistant";
+import MyLineChart from "./visual";
 
 function Page(){
 	const today = new Date();
@@ -48,6 +50,7 @@ function Page(){
 	];
 
 	const [currentReport, setCurrentReport] = useState('');
+	const [currentData, setCurrentData] = useState({name: 'blood status', color: 'cyan'});
 
 	const details = [
 		{name: 'weight', value: 72, unit: 'kg', color: 'cyan'},
@@ -55,7 +58,7 @@ function Page(){
 	]
 
 	const handle_open_div = function(name){
-		if(currentReport){
+		if(currentReport === name){
 			return setCurrentReport('');
 		}
 		setCurrentReport(name);
@@ -64,17 +67,17 @@ function Page(){
 
 	return(
 		<>
-		<div className="h-full p-2 grid sm:grid-cols-1 md:grid-cols-2 bg-white/90 gap-4">
+		<div className="h-full p-2 grid sm:grid-cols-1 md:grid-cols-2 gap-4">
 
-			<div className="flex flex-col gap-4">
 
-				<div className="w-full rounded-md bg-black/10 backdrop-blur-md p-2 text-black grid md:grid-cols-2 gap-2">
-					<div className="">
+			<div className="flex flex-col gap-4 order-1 md:order-2">
+				<div className="w-full rounded-md bg-black/10 backdrop-blur-md p-2 text-black grid sm:grid-cols-2 gap-2">
+					<div className="h-full flex flex-col justify-between">
 						<h1 className="font-bold">Body Mass Index (BMI)</h1>
 						<div className="p-2 ">
 							<p className="text-2xl font-bold">25.0</p>
 						</div>
-						<div>
+						<div className="">
 							<div className="w-full p-1.5 rounded-full bg-red-300 bg-gradient-to-r from-purple-300 via-blue-700 via-yellow-200 to-red-200"></div>
 						</div>
 						<div className={`flex justify-between p-1`}>
@@ -83,7 +86,7 @@ function Page(){
 							))}
 						</div>
 					</div>
-					<div className="sm:border-t-2 md:border-t-0 md:border-l-2 border-black/20 p-2 flex flex-col sm:justify-between gap-2 text-white">
+					<div className="border-t-2 sm:border-t-0 sm:border-l-2 border-black/20 p-2 flex flex-col sm:justify-between gap-2 text-white">
 							{details.map((i, index) => (
 								<div className={`bg-${i.color}-400 rounded-xl`}>
 									<div className="flex justify-between gap-1 px-2 py-1">
@@ -189,8 +192,29 @@ function Page(){
 						</div>
 
 						{/* current report */}
-						<div>
+						<div className={`h-full rounded-lg flex flex-col gap-2`}>
+							<div className="flex flex-row text-xs justify-between gap-[1px] bg-black/10 p-1 rounded-full">
+								{report.map((i, index) => (
+									<div className={`px-2 py-1 bg-${i.color}-500 rounded-full text-white cursor-pointer`}
+									onClick={() => setCurrentData({name: i.name, color: i.color})}
+									>
+										<span className="capitalize font-semibold">{i.name}</span>
+									</div>
+								))}
+							</div>
 
+							<div className={`flex flex-col h-[170px] sm:h-[80%] bg-${currentData.color}-100/30 rounded-lg`}>
+								<div className="h-[80%]">
+									<MyLineChart color={currentData.color}/>
+								</div>
+								<div className="flex flex-row grid grid-cols-7 p-2 mt-auto">
+									{daysOfWeek.map((i, index) => (
+										<div key={index} className={`text-sm text-center text-${currentData.color}-800`}>
+											<span>{i}</span>
+										</div>
+									))}
+								</div>
+							</div>
 						</div>
 
 						
@@ -198,32 +222,14 @@ function Page(){
 
 
 				</div>
+			</div>	
+
+
+			
+			<div className="flex order-2 mb-8 sm:mb-4">
+				<Assistant/>
 			</div>
 
-
-			{/* chat bot */}
-			<div className="p-2">
-				{/* <div>
-					<h1 className="font-bold">Bot Assistant</h1>
-				</div> */}
-
-				<div className="bg-indigo-700/70 rounded-full p-2 flex gap-2 items-center text-white">
-					<div className="w-fit h-fit p-5 rounded-full bg-white/50"></div>
-					<div>
-						<span>Discover Our Healthcare Chat Assistant</span>
-					</div>
-					<div className="w-fit h-fit rounded-full bg-white/90 ml-auto">
-						<div className="flex text-black py-2">
-							<svg className="w-5 h-5 text-zinc-500" fill="none" stroke="currentColor" viewBox="-6 0 24 24">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-							</svg>
-							<svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="6 0 24 24">
-								<path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-							</svg>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 		</>
 	)
