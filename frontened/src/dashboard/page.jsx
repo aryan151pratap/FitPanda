@@ -2,7 +2,7 @@ import { useState } from "react";
 import Assistant from "./assistant";
 import MyLineChart from "./visual";
 
-function Page(){
+function Page({ user_data }){
 	const today = new Date();
 	const [currentMonth, setCurrentMonth] = useState(today.getMonth());
 	const [currentYear, setCurrentYear] = useState(today.getFullYear());
@@ -75,7 +75,7 @@ function Page(){
 					<div className="h-full flex flex-col justify-between">
 						<h1 className="font-bold">Body Mass Index (BMI)</h1>
 						<div className="p-2 ">
-							<p className="text-2xl font-bold">25.0</p>
+							<p className="text-2xl font-bold">{(user_data.weight / ((user_data.height / 100) ** 2)).toFixed(2)}</p>
 						</div>
 						<div className="">
 							<div className="w-full p-1.5 rounded-full bg-red-300 bg-gradient-to-r from-purple-300 via-blue-700 via-yellow-200 to-red-200"></div>

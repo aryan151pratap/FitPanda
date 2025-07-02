@@ -106,7 +106,7 @@ function Page_1({ details, setNotification, setCurrent_user }) {
 
       <div className='h-full p-2 bg-white/90'>
         {activeTab === 'dashboard' ?
-        <Page setNotification={setNotification}/>
+        <Page setNotification={setNotification} user_data={details}/>
         :
         activeTab === 'setting' ?
         <Setting details={details} setNotification={setNotification} setCurrent_user={setCurrent_user}/>
